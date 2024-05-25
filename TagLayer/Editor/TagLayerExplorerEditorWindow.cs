@@ -10,12 +10,13 @@ using UnityEngine.UIElements;
 public class TagLayerExplorerEditorWindow : EditorWindow
 {
     private List<GameObject> _foundObjects = new();
+    // ui elements
     private EnumField _searchTypeField;
     private TagField _tagField;
     private LayerField _layerField;
     private VisualElement _inputElement;
+    private VisualElement _foundObjectsView;
 
-    VisualElement _foundObjectsView;
     [MenuItem("Tools/Tag&LayerExplorer")]
     public static void Init()
     {
@@ -32,7 +33,8 @@ public class TagLayerExplorerEditorWindow : EditorWindow
 
     public void CreateGUI()
     {
-        // rootVisualElement
+        _foundObjects.Clear();
+
         _inputElement = new VisualElement();
 
         _searchTypeField = new EnumField("Search Type", SearchType.Tag);
@@ -52,11 +54,10 @@ public class TagLayerExplorerEditorWindow : EditorWindow
 
         _foundObjectsView = new VisualElement();
         rootVisualElement.Add(_foundObjectsView);
-
         Button selectAllBtn = new Button();
         selectAllBtn.text = "Select found objects";
-        selectAllBtn.RegisterValueChangedCallback(OnSelectBtnClicked);
-
+        selectAllBtn.clicked += SelectFoundObjects;
+        rootVisualElement.Add(selectAllBtn);
     }
 
     private void RenewSearchView(string searchTarget)
@@ -106,9 +107,12 @@ public class TagLayerExplorerEditorWindow : EditorWindow
         }
     }
 
-    private void OnSelectBtnClicked(ChangeEvent<string> evt)
+    private void SelectFoundObjects()
     {
-        Selection.objects = _foundObjects.ToArray();
+        if(_foundObjects.Count > 0)
+        {
+            Selection.objects = _foundObjects.ToArray();
+        }
     }
     #endregion
 
