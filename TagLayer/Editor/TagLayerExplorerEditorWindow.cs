@@ -15,7 +15,7 @@ public class TagLayerExplorerEditorWindow : EditorWindow
     private TagField _tagField;
     private LayerField _layerField;
     private VisualElement _inputElement;
-    private VisualElement _foundObjectsView;
+    private ScrollView _foundObjectsView;
 
     [MenuItem("Tools/Tag&LayerExplorer")]
     public static void Init()
@@ -52,7 +52,7 @@ public class TagLayerExplorerEditorWindow : EditorWindow
 
         rootVisualElement.Add(_inputElement);
 
-        _foundObjectsView = new VisualElement();
+        _foundObjectsView = new ScrollView();
         rootVisualElement.Add(_foundObjectsView);
         Button selectAllBtn = new Button();
         selectAllBtn.text = "Select found objects";
