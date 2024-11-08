@@ -28,7 +28,11 @@ namespace ObjectsPlaceTool
         private SerializedProperty _addRandomPosProp;
         private SerializedProperty _minPos;
         private SerializedProperty _maxPos;
-
+        // random scale
+        private SerializedProperty _mulRandomScaleProp;
+        private SerializedProperty _minScale;
+        private SerializedProperty _maxScale;
+        
         private SerializedProperty _isLocalProp;
         private SerializedProperty _sampleOnNavMeshProp;
         private SerializedProperty _sampleOnNavMeshRadiusProp;
@@ -59,6 +63,10 @@ namespace ObjectsPlaceTool
             _addRandomPosProp = serializedObject.FindProperty("_addRandomPos");
             _minPos = serializedObject.FindProperty("_minPos");
             _maxPos = serializedObject.FindProperty("_maxPos");
+            // random scale
+            _mulRandomScaleProp = serializedObject.FindProperty("_mulRandomScale");
+            _minScale = serializedObject.FindProperty("_minScale");
+            _maxScale = serializedObject.FindProperty("_maxScale");
             // shared
             _isLocalProp = serializedObject.FindProperty("_isLocal");
             _sampleOnNavMeshProp = serializedObject.FindProperty("_sampleOnNavMesh");
@@ -187,6 +195,7 @@ namespace ObjectsPlaceTool
         {
             RotationGUI();
             AddPosGUI();
+            MulScaleGUI();
             SampleOnNavmeshGUI();
         }
         
@@ -224,6 +233,17 @@ namespace ObjectsPlaceTool
                 EditorGUILayout.PropertyField(_maxPos);
             }
         }
+
+        private void MulScaleGUI()
+        {
+            EditorGUILayout.PropertyField(_mulRandomScaleProp);
+            if (_mulRandomScaleProp.boolValue)
+            {
+                EditorGUILayout.PropertyField(_minScale);
+                EditorGUILayout.PropertyField(_maxScale);
+            }
+        }
+        
         private void ExportGUI()
         {
             EditorGUILayout.LabelField("Export", EditorStyles.boldLabel);

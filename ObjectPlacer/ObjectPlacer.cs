@@ -42,7 +42,11 @@ namespace ObjectsPlaceTool
         [SerializeField] private bool _addRandomPos;
         [SerializeField] private Vector3 _minPos;
         [SerializeField] private Vector3 _maxPos;
-
+        // parameter for scale
+        [SerializeField] private bool _mulRandomScale;
+        [SerializeField] private Vector3 _minScale = new(0.9f, 0.9f, 0.9f);
+        [SerializeField] private Vector3 _maxScale = new(1.1f, 1.1f, 1.1f);
+        
         [SerializeField] private bool _isLocal = true;
         [SerializeField] private bool _sampleOnNavMesh = true;
         [SerializeField] private float _sampleRadius = 1f;
@@ -77,6 +81,9 @@ namespace ObjectsPlaceTool
             public bool AddRandomPos;
             public Vector3 MinPos;
             public Vector3 MaxPos;
+            public bool MultiplyRandomScale;
+            public Vector3 MinScale;
+            public Vector3 MaxScale;
         }
 
         private void OnValidate()
@@ -176,6 +183,9 @@ namespace ObjectsPlaceTool
                 AddRandomPos = _addRandomPos,
                 MinPos = _minPos,
                 MaxPos = _maxPos,
+                MultiplyRandomScale = _mulRandomScale,
+                MinScale = _minScale,
+                MaxScale = _maxScale,
             };
             if (placeType == PlaceType.Preset)
             {
@@ -205,7 +215,7 @@ namespace ObjectsPlaceTool
 
                     if (option.AddRandomPos)
                     {
-                        position += PlacerUtils.GetRandomOffsetInRange(option.MinPos, option.MaxPos);
+                        position += PlacerUtils.GetRandomValueInRange(option.MinPos, option.MaxPos);
                     }
 
                     if (option.SampleOnNavMesh)
@@ -213,14 +223,21 @@ namespace ObjectsPlaceTool
                         position = PlacerUtils.SampleOnNavmesh(position, option.SampleRadius);
                     }
 
+                    if (option.MultiplyRandomScale)
+                    {
+                        Vector3 scale = target.localScale;
+                        Vector3 mul = PlacerUtils.GetRandomValueInRange(option.MinScale, option.MaxScale);
+                        target.localScale = Vector3.Scale(scale, mul);
+                    }
+
                     target.SetLocalPositionAndRotation(position, rotation);
                 }
             }
 
 #if UNITY_EDITOR
-            foreach (Transform targt in placedObjects)
+            foreach (Transform target in placedObjects)
             {
-                UnityEditor.EditorUtility.SetDirty(targt);
+                UnityEditor.EditorUtility.SetDirty(target);
             }
 #endif
         }

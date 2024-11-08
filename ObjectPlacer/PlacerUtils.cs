@@ -104,7 +104,7 @@ namespace ObjectsPlaceTool
                 UnityEngine.Random.Range(min.z, max.z));
         }
 
-        public static Vector3 GetRandomOffsetInRange(Vector3 min, Vector3 max)
+        public static Vector3 GetRandomValueInRange(Vector3 min, Vector3 max)
         {
             return new Vector3(
                 UnityEngine.Random.Range(min.x, max.x),
