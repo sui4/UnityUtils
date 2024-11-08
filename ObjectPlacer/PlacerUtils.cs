@@ -12,7 +12,7 @@ namespace ObjectsPlaceTool
         public static void GetDirectChildrenComponent<T>(Transform parent, out List<T> components) where T : Component
         {
             components = new List<T>();
-            foreach (var child in parent.GetComponentsInChildren<T>())
+            foreach (T child in parent.GetComponentsInChildren<T>())
             {
                 if (child.transform == parent) continue;
                 if (child.transform.parent != parent) continue;
@@ -30,7 +30,7 @@ namespace ObjectsPlaceTool
         {
             var preset = ScriptableObject.CreateInstance<TransformInfos>();
             preset.SaveTransforms(transforms, isLocal);
-            var path = EditorUtility.SaveFilePanelInProject("Save User Transforms Preset", "UserTransformsPreset",
+            string path = EditorUtility.SaveFilePanelInProject("Save Transforms as Preset", "TransformsPreset",
                 "asset",
                 "");
             if (!string.IsNullOrWhiteSpace(path))

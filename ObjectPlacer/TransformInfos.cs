@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
 
@@ -9,9 +10,9 @@ namespace ObjectsPlaceTool
     [Serializable]
     public class TransformInfo
     {
-        [SerializeField] private Vector3 _position;
-        [SerializeField] private Quaternion _rotation;
-
+        [SerializeField] private Vector3 _position = Vector3.zero;
+        [SerializeField] private Quaternion _rotation = quaternion.identity;
+        [SerializeField] private Vector3 _scale = Vector3.one;
         public Vector3 Position
         {
             get => _position;
@@ -22,6 +23,12 @@ namespace ObjectsPlaceTool
         {
             get => _rotation;
             set => _rotation = value;
+        }
+
+        public Vector3 Scale
+        {
+            get => _scale;
+            set => _scale = value;
         }
     }
 
@@ -49,7 +56,8 @@ namespace ObjectsPlaceTool
                     _transformInfoList.Add(new TransformInfo()
                     {
                         Position = transform.localPosition,
-                        Rotation = transform.localRotation
+                        Rotation = transform.localRotation,
+                        Scale = transform.localScale
                     });
                 }
             }
@@ -60,7 +68,8 @@ namespace ObjectsPlaceTool
                     _transformInfoList.Add(new TransformInfo()
                     {
                         Position = transform.position,
-                        Rotation = transform.rotation
+                        Rotation = transform.rotation,
+                        Scale = transform.lossyScale
                     });
                 }
             }
@@ -77,10 +86,11 @@ namespace ObjectsPlaceTool
 
             if (isLocal)
             {
-                for (int ti = 0; ti < transforms.Count && ti < _transformInfoList.Count; ti++)
+                for (var ti = 0; ti < transforms.Count && ti < _transformInfoList.Count; ti++)
                 {
-                    var data = _transformInfoList[ti];
+                    TransformInfo data = _transformInfoList[ti];
                     transforms[ti].SetLocalPositionAndRotation(data.Position, data.Rotation);
+                    transforms[ti].localScale = data.Scale;
 #if UNITY_EDITOR
                     EditorUtility.SetDirty(transforms[ti]);
 #endif
@@ -88,10 +98,24 @@ namespace ObjectsPlaceTool
             }
             else
             {
-                for (int ti = 0; ti < transforms.Count && ti < _transformInfoList.Count; ti++)
+                for (var ti = 0; ti < transforms.Count && ti < _transformInfoList.Count; ti++)
                 {
-                    var data = _transformInfoList[ti];
+                    TransformInfo data = _transformInfoList[ti];
                     transforms[ti].SetPositionAndRotation(data.Position, data.Rotation);
+                    Transform parent = transforms[ti].parent;
+                    if (parent)
+                    {
+                        Vector3 parentLossyScale = parent.lossyScale;
+                        transforms[ti].localScale = new Vector3(
+                            data.Scale.x / parentLossyScale.x,
+                            data.Scale.y / parentLossyScale.y,
+                            data.Scale.z / parentLossyScale.z
+                            );
+                    }
+                    else
+                    {
+                        transforms[ti].localScale = data.Scale;
+                    }
 #if UNITY_EDITOR
                     EditorUtility.SetDirty(transforms[ti]);
 #endif

@@ -116,6 +116,12 @@ namespace ObjectsPlaceTool
                     Target.PlaceObjects();
                 }
 
+                if (GUILayout.Button("Re Instantiate & Place Objects"))
+                {
+                    Target.ClearObjects();
+                    Target.PlaceObjects();
+                }
+
                 EditorGUILayout.Separator();
 
                 ExportGUI();
